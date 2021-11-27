@@ -1,0 +1,9 @@
+Disaster Type,January,February,March,April,May,June,July,August,September,October,November,December
+Drought,7,7,17,17,17,28,29,29,18,16,16,9
+Flooding,5,5,7,9,11,7,2,3,1,4,1,2
+Freeze,3,0,1,1,0,0,0,0,0,0,0,4
+Severe Storm,4,10,22,37,33,19,13,5,1,4,3,2
+Tropical Cyclone,0,0,0,0,0,1,5,20,25,8,1,0
+Wildfire,1,1,2,2,2,13,13,14,16,16,15,5
+Winter Storm,10,5,2,0,0,0,0,0,0,0,0,2
+All Disasters,30,28,51,66,63,68,62,71,61,48,36,24

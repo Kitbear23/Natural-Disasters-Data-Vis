@@ -1,0 +1,40 @@
+.page-header-container {
+    background-color: black;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 50px;
+}
+
+.title-container {
+    margin-left: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.subtitle-container {
+    margin-right: 30px;
+}
+
+.page-header-element {
+    color: white;
+}
+
+#page-title {
+    text-align: start;
+}
+
+#page-subtitle {
+    text-align: end;
+}
+
+.bar {
+    fill: darkred;
+}
+
+#barlabel {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 18;
+    text-anchor: middle;
+}

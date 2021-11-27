@@ -1,0 +1,23 @@
+{
+  "name": "natural-disasters-vis",
+  "version": "1.0.0",
+  "description": "Visualizations of data from Natural Disasters in the United States",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blazerunner44/Natural-Disasters-Vis.git"
+  },
+  "author": "Katie Harris, Jaden Taylor, Brendon Earl",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/blazerunner44/Natural-Disasters-Vis/issues"
+  },
+  "homepage": "https://github.com/blazerunner44/Natural-Disasters-Vis#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongodb": "^4.2.0"
+  }
+}
