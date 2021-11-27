@@ -16,7 +16,7 @@ const url = 'mongodb://localhost:27017';
 const dbName = 'US-Natural-Disasters';
 const client = new MongoClient(url);
 
-app.use(express.static('public'));
+app.use(express.static(__dirname + '/public'));
 app.use(express.json());
 app.use(express.urlencoded());
 
@@ -26,7 +26,7 @@ app.use(express.urlencoded());
 
 // Data for natural disaster occurrences, fatalities, and CPI-adjusted cost
 app.get('/Occurrences_Fatalities_Cost_Data', (req, res) => {
-    fatal_police_shootings.find({}, {}).toArray((err, r) => {
+    Occurrences_Fatalities_Cost.find({}, {}).toArray((err, r) => {
         if (err) throw err;
         res.status(200);
         res.append("Context-Type", "application/json");
@@ -36,7 +36,7 @@ app.get('/Occurrences_Fatalities_Cost_Data', (req, res) => {
 
 // Data for number of natural disasters by type per month from 1980-2021
 app.get('/Num_Disaster_Type_Per_Month_Data', (req, res) => {
-    fatal_police_shootings.find({}, {}).toArray((err, r) => {
+    Num_Disaster_Type_Per_Month.find({}, {}).toArray((err, r) => {
         if (err) throw err;
         res.status(200);
         res.append("Context-Type", "application/json");
@@ -61,9 +61,9 @@ app.get('/index.js', (req, res) => {
         res.end(data);
     });
 })
-app.get('/index.js', (req, res) => {
+app.get('/index.css', (req, res) => {
     fs.readFile("./Visualizations/index.css", (err, data) => {
-        res.writeHead(200, {'Content-Type': 'text/javascript'});
+        res.writeHead(200, {'Content-Type': 'text/css'});
         res.end(data);
     });
 })

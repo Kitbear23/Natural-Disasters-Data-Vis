@@ -17,16 +17,16 @@ $.ajax({
         let fatalities_count_map = {};
         
         data.forEach(d => {
-            if(count_map[d.Year] != undefined) {
-                count_map[d.Year] += d.Deaths;
+            if(fatalities_count_map[d.Year] != undefined) {
+                fatalities_count_map[d.Year] += parseInt(d.Deaths);
             }
             else {
-                count_map[d.Year] = 0;
+                fatalities_count_map[d.Year] = parseInt(d.Deaths);
             }
         });
 
-        for (let key in count_map) {
-            let item = {"key": key, "value": count_map[key]};
+        for (let key in fatalities_count_map) {
+            let item = {"key": key, "value": fatalities_count_map[key]};
             fatalities_data.push(item);
         }
 

@@ -15,6 +15,9 @@
 
 .subtitle-container {
     margin-right: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .page-header-element {
