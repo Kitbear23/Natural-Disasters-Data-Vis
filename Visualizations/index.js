@@ -1,4 +1,4 @@
-function checkIfDeathsForDisasterUndefined(fatalities){
+function checkIfDeathsForDisasterUndefined(fatalities) {
     if(fatalities != undefined){
         return fatalities;
     }
@@ -6,6 +6,20 @@ function checkIfDeathsForDisasterUndefined(fatalities){
         return 0;
     }
 };
+
+function prettifyDisasterType(disaster_type) {
+    if (disaster_type == 'Tropical_Cyclone') {
+        return 'Tropical Cyclone';
+    }
+    if ((disaster_type == 'Severe_Storm')) {
+        return 'Severe Storm';
+    }
+    if ((disaster_type == 'Winter_Storm')) {
+        return 'Winter Storm';
+    }
+
+    return disaster_type;
+}
 
 $.ajax({
     method: "GET",
@@ -218,20 +232,24 @@ $.ajax({
                         .attr("class", "tooltipText")
                         .text(year)
                         .attr("x", d3.pointer(d)[0] + (tooltipWidth / 4))
-                        .attr("y", d3.pointer(d)[1] - (tooltipHeight / 1.5));
+                        .attr("y", d3.pointer(d)[1] - (tooltipHeight / 1.4))
+                        .style("font-size", "18px")
+                        .style("text-decoration", "underline");
 
                 tooltip.append("text")
-                        .attr("class", "tooltipSubtext")
-                        .text(disaster_type)
+                        .attr("class", "tooltipText")
+                        .text(prettifyDisasterType(disaster_type))
                         .attr("x", d3.pointer(d)[0] + (tooltipWidth / 4))
-                        .attr("y", d3.pointer(d)[1] - (tooltipHeight / 2.28))
-                        .style("fill", color(disaster_type));
+                        .attr("y", d3.pointer(d)[1] - (tooltipHeight / 2.5))
+                        .style("fill", color(disaster_type))
+                        .style("font-size", "14px");
 
                 tooltip.append("text")
-                        .attr("class", "tooltipSubtext")
+                        .attr("class", "tooltipText")
                         .text("Fatalities: " + number_of_fatalities)
                         .attr("x", d3.pointer(d)[0] + (tooltipWidth / 4))
-                        .attr("y", d3.pointer(d)[1] - (tooltipHeight / 5.75));
+                        .attr("y", d3.pointer(d)[1] - (tooltipHeight / 7))
+                        .style("font-size", "14px");
 
             })
             .on("mouseout", d => {
