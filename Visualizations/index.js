@@ -26,9 +26,9 @@ $.ajax({
     url: "/Occurrences_Fatalities_Cost_Data",
     success: function(data){
         // Define variables
-        let margin = {top: 20, right: 20, bottom: 30, left: 50, xAxis: 60, yAxis: 60, title: 50};
+        let margin = {top: 20, right: 20, bottom: 30, left: 50, xAxis: 60, yAxis: 60, title: 50, legend: 210};
         let width = 1500 - margin.left - margin.right;
-        let height = 800 - margin.top - margin.bottom;
+        let height = 600 - margin.top - margin.bottom;
 
         //////////////////////////////////////////////////////////////////////////////////////////
         //                                      Process Data                                    //
@@ -109,6 +109,7 @@ $.ajax({
         /////////////////////////////////////////////////////////////////////////////////////////
         //                                Create chart elements                                //
         /////////////////////////////////////////////////////////////////////////////////////////
+        let screen_width = d3.select("body").clientWidth;
         let tooltipWidth = 120;
         let tooltipHeight = 60;
         let axisFontSize = 14;
@@ -116,7 +117,7 @@ $.ajax({
         // Chart SVG
         let svg = d3.select('#chart')
             .append('svg')
-            .attr('width', width + margin.left + margin.right + margin.yAxis)
+            .attr('width', width + margin.left + margin.right + margin.yAxis + margin.legend)
             .attr('height', height + margin.top + margin.bottom + margin.xAxis + margin.title)
             .append("g")
             .attr("transform", 
@@ -165,7 +166,8 @@ $.ajax({
             .attr("fill", d => color(d.key))
 
         let bars = svg.selectAll("g.layer").selectAll("rect")
-        .data(d => d, e => e.data.year);
+        .data(d => d, e => e.data.year)
+        .attr("id", d => d.Disaster.slice(0, 5));
 
         bars.enter()
             .append("rect")
@@ -262,6 +264,31 @@ $.ajax({
            .attr("height", d => y(d[0]) - y(d[1]));
 
         bars.exit().remove();
+
+        //Add interactive legend
+        let legend = svg.selectAll(".legend")
+                        .data(color.domain())
+                        .enter()
+                        .append("g")
+                        .attr("class", "legend");
+
+        legend.attr("transform", (d, i) => "translate(" + (width + 80) + ", " + (25 * i) + ")");
+
+        legend.append("rect")
+                .attr("width", 10)
+                .attr("height", 10)
+                .style("fill", d => color(d.Disaster))
+                .on("mouseenter", (e, d, i) => {
+                    d3.selectAll("#" + d.slice(0, 5)).style("opacity", 0.5);
+                })
+                .on("mouseleave", (e, d, i) => {
+                    d3.selectAll("#" + d.slice(0, 5)).style("opacity", 1);
+                });
+
+        legend.append("text")
+                .text(d => d)
+                .attr("x", 15)
+                .attr("y", 10);
 
         // // Add chart title
         // svg.append("text")
