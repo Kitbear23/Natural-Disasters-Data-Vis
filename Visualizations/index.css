@@ -43,5 +43,10 @@
 }
 
 .tooltipText {
+    font-weight: bold;
+    text-anchor: middle;
+}
+
+.tooltipSubtext {
     text-anchor: middle;
 }

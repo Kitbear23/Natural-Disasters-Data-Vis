@@ -100,7 +100,7 @@ $.ajax({
         let x = d3.scaleBand().range([0, width]).padding(0.1);
         let y = d3.scaleLinear().range([height, 0]);
 
-        let color = d3.scaleOrdinal().domain(disaster_types).range(["#05698c", "#076d62", "#Ecc63f", "#69f2f5", "#504a64", "#B0e0f9", "#E02203"]);
+        let color = d3.scaleOrdinal().domain(disaster_types).range(["#05698c", "#5cc5ab", "#Ecc63f", "#69f2f5", "#7956b5", "#B0e0f9", "#E02203"]);
 
         // Scale the range of the data in the domains
         x.domain(years); // year d3.extent(years)
@@ -245,7 +245,7 @@ $.ajax({
                         .style("font-size", "14px");
 
                 tooltip.append("text")
-                        .attr("class", "tooltipText")
+                        .attr("class", "tooltipSubtext")
                         .text("Fatalities: " + number_of_fatalities)
                         .attr("x", d3.pointer(d)[0] + (tooltipWidth / 4))
                         .attr("y", d3.pointer(d)[1] - (tooltipHeight / 7))
