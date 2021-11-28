@@ -1,6 +1,6 @@
-function checkIfDeathsForDisasterUndefined(deaths){
-    if(deaths != undefined){
-        return deaths;
+function checkIfDeathsForDisasterUndefined(fatalities){
+    if(fatalities != undefined){
+        return fatalities;
     }
     else {
         return 0;
@@ -97,6 +97,7 @@ $.ajax({
         /////////////////////////////////////////////////////////////////////////////////////////
         let tooltipWidth = 120;
         let tooltipHeight = 60;
+        let axisFontSize = 14;
 
         // Chart SVG
         let svg = d3.select('#chart')
@@ -112,26 +113,24 @@ $.ajax({
             .attr("transform", d => "translate(0, " + height + ")")
             .call(d3.axisBottom(x))
             .selectAll("text")
-            .style("font-size", 14);
+            .style("font-size", axisFontSize);
 
         svg.append("g")
             .attr("transform", d => "translate(0, 0)")
             .call(d3.axisLeft(y))
             .selectAll("text")
-            .style("font-size", 14);
+            .style("font-size", axisFontSize);
 
         // Add X axis label
         svg.append("text")
-        .style("font-family", "Times New Roman")
-        .style("font-size", 20)
+        .attr("class", "axisLabel")
         .attr("x", width / 2)
         .attr("y", height + margin.xAxis)
         .text("Year");
 
         // Y axis label
         svg.append("text")
-        .style("font-family", "Times New Roman")
-        .style("font-size", 20)
+        .attr("class", "axisLabel")
         .attr("transform", "rotate(-90)")
         .attr("x", -(height / 2) - (margin.top + margin.xAxis + margin.bottom))
         .attr("y", -(margin.yAxis + 20))
@@ -207,43 +206,36 @@ $.ajax({
                 let tooltip = svg.append("svg").attr("id", "tooltipSVG");
 
                 // Add background for tooltip
-                let tooltipBackground = tooltip.append("rect")
-                                            .attr("class", "tooltip")
-                                            .attr("width", tooltipWidth)
-                                            .attr("height", tooltipHeight)
-                                            .attr("x", d3.pointer(d)[0] - (tooltipWidth / 4))
-                                            .attr("y", d3.pointer(d)[1] - tooltipHeight);
+                tooltip.append("rect")
+                        .attr("class", "tooltip")
+                        .attr("width", tooltipWidth)
+                        .attr("height", tooltipHeight)
+                        .attr("x", d3.pointer(d)[0] - (tooltipWidth / 4))
+                        .attr("y", d3.pointer(d)[1] - tooltipHeight);
 
                 // Add text for tooltip
-                let tooltipYearText = tooltip.append("text")
-                                        .attr("id", "year")
-                                        .attr("class", "tooltipText")
-                                        .text(year)
-                                        .attr("x", d3.pointer(d)[0] + (tooltipWidth / 4))
-                                        .attr("y", d3.pointer(d)[1] - (tooltipHeight / 1.5));
+                tooltip.append("text")
+                        .attr("class", "tooltipText")
+                        .text(year)
+                        .attr("x", d3.pointer(d)[0] + (tooltipWidth / 4))
+                        .attr("y", d3.pointer(d)[1] - (tooltipHeight / 1.5));
 
-                let tooltipDisasterText = tooltip.append("text")
-                                            .attr("id", "disaster")
-                                            .attr("class", "tooltipSubtext")
-                                            .text(disaster_type)
-                                            .attr("x", d3.pointer(d)[0] + (tooltipWidth / 4))
-                                            .attr("y", d3.pointer(d)[1] - (tooltipHeight / 2.28))
-                                            .style("color", color(disaster_type));
+                tooltip.append("text")
+                        .attr("class", "tooltipSubtext")
+                        .text(disaster_type)
+                        .attr("x", d3.pointer(d)[0] + (tooltipWidth / 4))
+                        .attr("y", d3.pointer(d)[1] - (tooltipHeight / 2.28))
+                        .style("fill", color(disaster_type));
 
-                let tooltipFatalitiesText = tooltip.append("text")
-                                                .attr("id", "fatalities")
-                                                .attr("class", "tooltipSubtext")
-                                                .text("Fatalities: " + number_of_fatalities)
-                                                .attr("x", d3.pointer(d)[0] + (tooltipWidth / 4))
-                                                .attr("y", d3.pointer(d)[1] - (tooltipHeight / 5.75));
+                tooltip.append("text")
+                        .attr("class", "tooltipSubtext")
+                        .text("Fatalities: " + number_of_fatalities)
+                        .attr("x", d3.pointer(d)[0] + (tooltipWidth / 4))
+                        .attr("y", d3.pointer(d)[1] - (tooltipHeight / 5.75));
 
             })
             .on("mouseout", d => {
                 svg.select("#tooltipSVG").remove();
-                svg.select("#tooltip").remove();
-                svg.select("#year").remove();
-                svg.select("#disaster").remove();
-                svg.select("#fatalities").remove();
             })
             .transition()
             .duration(0)

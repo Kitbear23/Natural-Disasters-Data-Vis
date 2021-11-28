@@ -32,19 +32,24 @@
     text-align: end;
 }
 
+.axisLabel {
+    font-family:  "Times New Roman";
+    font-size: 20px;
+}
+
 .tooltip {
     fill: white;
     filter: drop-shadow(2px 1px 5px #bbbbbb);
 }
 
 .tooltipText {
-    font-family: 'Times New Roman', Times, serif;
-    font-size: 18;
+    font-family: "Times New Roman";
+    font-size: 18px;
     text-anchor: middle;
 }
 
 .tooltipSubtext {
-    font-family: 'Times New Roman', Times, serif;
-    font-size: 16;
+    font-family: "Times New Roman";
+    font-size: 16px;
     text-anchor: middle;
 }
