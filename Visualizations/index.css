@@ -32,12 +32,19 @@
     text-align: end;
 }
 
-.bar {
-    /* fill: darkred; */
+.tooltip {
+    fill: white;
+    filter: drop-shadow(2px 1px 5px #bbbbbb);
 }
 
-#barlabel {
+.tooltipText {
     font-family: 'Times New Roman', Times, serif;
     font-size: 18;
+    text-anchor: middle;
+}
+
+.tooltipSubtext {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 16;
     text-anchor: middle;
 }

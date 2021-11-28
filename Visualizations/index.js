@@ -59,7 +59,6 @@ $.ajax({
         // Create new pre-processed dataset
         for (let year in data_map) {
             let item = {
-                "id": year,
                 "year": parseInt(year), 
                 "Flooding": checkIfDeathsForDisasterUndefined(data_map[year]["Flooding"]), 
                 "Tropical_Cyclone": checkIfDeathsForDisasterUndefined(data_map[year]["Tropical Cyclone"]), 
@@ -79,6 +78,10 @@ $.ajax({
             new_data.push(item);
         }
 
+        /////////////////////////////////////////////////////////////////////////////////////////
+        //                           Set x and y ranges and domains                            //
+        /////////////////////////////////////////////////////////////////////////////////////////
+
         // Set the ranges
         let x = d3.scaleBand().range([0, width]).padding(0.1);
         let y = d3.scaleLinear().range([height, 0]);
@@ -89,14 +92,11 @@ $.ajax({
         x.domain(years); // year d3.extent(years)
         y.domain([0, d3.max(new_data, d => d.All)]); // number of fatalities
 
-        // Create div element to contain chart
-        d3.select('body').append('div')
-                    .attr('id', 'chartContainer')
-                    .style("text-align", "center");
-
-        // Create chart div
-        d3.select('#chartContainer').append('div')
-                    .attr('id', 'chart');
+        /////////////////////////////////////////////////////////////////////////////////////////
+        //                                Create chart elements                                //
+        /////////////////////////////////////////////////////////////////////////////////////////
+        let tooltipWidth = 120;
+        let tooltipHeight = 60;
 
         // Chart SVG
         let svg = d3.select('#chart')
@@ -106,63 +106,6 @@ $.ajax({
             .append("g")
             .attr("transform", 
                 "translate(" + (margin.left + margin.yAxis) + "," + (margin.top + margin.bottom + margin.title) + ")");
-        
-        // Create bars
-        // Create stacked dataset for bar
-        let stackedData = d3.stack().keys(disaster_types)(new_data);
-
-        // Create stacked bars
-        svg.append("g")
-        .selectAll("g")
-        .data(stackedData)
-        .enter().append("g")
-        .attr("fill", d => color(d.key))
-        .selectAll("rect")
-        .data(d => d)
-        .enter()
-        .append("rect")
-            .attr("id", d => d.data.id)
-            .attr("x", d => x(d.data.year))
-            .attr("y", d => y(d[1]))
-            .attr("height", d => y(d[0]) - y(d[1]))
-            .attr("width", x.bandwidth())
-            .on("mouseover", (d, i) => { 
-                // Change opacity of bar
-                d3.select("#" + i.data.id).attr("opacity", "0.5");
-    
-                // Add bar label
-                svg.append("text")
-                    .attr("id", "barlabel") // Keep track of the label
-                    .attr("x", x(i.data.All) + (x.bandwidth() / 2))
-                    .attr("y", y(i[1]) - 10)
-                    .text("Fatalities: " + i[1]); 
-            });
-        // // Create bars
-        // let bars = svg.selectAll(".bar").data(data).enter().append("g").attr('class', 'bar')
-        //                 .attr("transform", d => "translate(" + x(d.Year) + "," + y(d.Deaths) + ")");
-
-        // bars.append('rect').attr("width", x.bandwidth()).attr("height", d => height - y(d.Deaths)).attr("id", d => d.Year);
-
-        // // Add bar mouse events
-        // bars.on("mouseover", (d, i) => { 
-        //     // Change opacity of bar
-        //     d3.select("#" + i.key).attr("opacity", "0.5");
-
-        //     // Add bar label
-        //     svg.append("text")
-        //         .attr("id", "barlabel") // Keep track of the label
-        //         .attr("x", x(getRaceText(i.key)) + (x.bandwidth() / 2))
-        //         .attr("y", y(i.value) - 10)
-        //         .text("Fatalities: " + i.value); 
-        //     });
-
-        // bars.on("mouseout", (d, i) => { 
-        //     // Revert opacity of bar
-        //     d3.select("#" + i.key).attr("opacity", "1");
-
-        //     // Remove bar label
-        //     d3.select("#barlabel").remove();
-        // });
 
         // Create axis
         svg.append("g")
@@ -193,6 +136,122 @@ $.ajax({
         .attr("x", -(height / 2) - (margin.top + margin.xAxis + margin.bottom))
         .attr("y", -(margin.yAxis + 20))
         .text("Number of Fatalities");
+
+        // Create stacked dataset for bar
+        let stackedData = d3.stack().keys(disaster_types)(new_data);
+
+        // Create stacked bars group
+        let group = svg.selectAll("g.layer")
+                        .data(stackedData, d => d.key);
+
+        group.exit().remove();
+
+        group.enter()
+            .append("g")
+            .classed("layer", true)
+            .attr("fill", d => color(d.key))
+
+        let bars = svg.selectAll("g.layer").selectAll("rect")
+        .data(d => d, e => e.data.year);
+
+        bars.enter()
+            .append("rect")
+            .attr("width", x.bandwidth())
+            .merge(bars)
+            .on("mouseover", (d, i) => {
+                // Get the year
+                let year = i.data.year;
+                // Get number of Floods
+                let num_floods = +i.data.Flooding;
+                // Get number of Tropical Cyclones
+                let num_trop_cyclones = +i.data.Tropical_Cyclone;
+                // Get number of Droughts
+                let num_droughts = +i.data.Drought;
+                // Get number of Freezes
+                let num_freezes = +i.data.Freeze;
+                // Get number of Severe Storms
+                let num_severe_storms = +i.data.Severe_Storm;
+                // Get number of Winter Storms
+                let num_winter_storms = +i.data.Winter_Storm;
+                // Get number of Wildfires
+                let num_wildfires = +i.data.Wildfire;
+                
+                // Evaluate the disaster type by comparing the mouseover data value for i[1] to the number of disasters
+                // or 
+                // num_floods + num_trop_cyclones + num_droughts + num_freezes + num_severe_storms + num_winter_storms + num_wildfires
+                let disaster_type, number_of_fatalities;
+                if (i[1] === num_floods){
+                    disaster_type = 'Flooding';
+                    number_of_fatalities = num_floods;
+                }else if (i[1] === num_floods + num_trop_cyclones) {
+                    disaster_type = 'Tropical_Cyclone';
+                    number_of_fatalities = num_trop_cyclones;
+                }else if (i[1] === num_floods + num_trop_cyclones + num_droughts) {
+                    disaster_type = 'Drought';
+                    number_of_fatalities = num_droughts;
+                }else if (i[1] === num_floods + num_trop_cyclones + num_droughts + num_freezes) {
+                    disaster_type = 'Freeze';
+                    number_of_fatalities = num_freezes;
+                }else if (i[1] === num_floods + num_trop_cyclones + num_droughts + num_freezes +num_severe_storms) {
+                    disaster_type = 'Severe_Storm';
+                    number_of_fatalities = num_severe_storms;
+                }else if (i[1] === num_floods + num_trop_cyclones + num_droughts + num_freezes +num_severe_storms + num_winter_storms) {
+                    disaster_type = 'Winter_Storm';
+                    number_of_fatalities = num_winter_storms;
+                }else if (i[1] === num_floods + num_trop_cyclones + num_droughts + num_freezes +num_severe_storms + num_winter_storms + num_wildfires) {
+                    disaster_type = 'Wildfire';
+                    number_of_fatalities = num_wildfires;
+                }
+
+                // Add tooltip SVG
+                let tooltip = svg.append("svg").attr("id", "tooltipSVG");
+
+                // Add background for tooltip
+                let tooltipBackground = tooltip.append("rect")
+                                            .attr("class", "tooltip")
+                                            .attr("width", tooltipWidth)
+                                            .attr("height", tooltipHeight)
+                                            .attr("x", d3.pointer(d)[0] - (tooltipWidth / 4))
+                                            .attr("y", d3.pointer(d)[1] - tooltipHeight);
+
+                // Add text for tooltip
+                let tooltipYearText = tooltip.append("text")
+                                        .attr("id", "year")
+                                        .attr("class", "tooltipText")
+                                        .text(year)
+                                        .attr("x", d3.pointer(d)[0] + (tooltipWidth / 4))
+                                        .attr("y", d3.pointer(d)[1] - (tooltipHeight / 1.5));
+
+                let tooltipDisasterText = tooltip.append("text")
+                                            .attr("id", "disaster")
+                                            .attr("class", "tooltipSubtext")
+                                            .text(disaster_type)
+                                            .attr("x", d3.pointer(d)[0] + (tooltipWidth / 4))
+                                            .attr("y", d3.pointer(d)[1] - (tooltipHeight / 2.28))
+                                            .style("color", color(disaster_type));
+
+                let tooltipFatalitiesText = tooltip.append("text")
+                                                .attr("id", "fatalities")
+                                                .attr("class", "tooltipSubtext")
+                                                .text("Fatalities: " + number_of_fatalities)
+                                                .attr("x", d3.pointer(d)[0] + (tooltipWidth / 4))
+                                                .attr("y", d3.pointer(d)[1] - (tooltipHeight / 5.75));
+
+            })
+            .on("mouseout", d => {
+                svg.select("#tooltipSVG").remove();
+                svg.select("#tooltip").remove();
+                svg.select("#year").remove();
+                svg.select("#disaster").remove();
+                svg.select("#fatalities").remove();
+            })
+            .transition()
+            .duration(0)
+           .attr("x", d => x(d.data.year))
+           .attr("y", d => y(d[1]))
+           .attr("height", d => y(d[0]) - y(d[1]));
+
+        bars.exit().remove();
 
         // // Add chart title
         // svg.append("text")
