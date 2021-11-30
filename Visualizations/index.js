@@ -89,6 +89,7 @@ $.ajax({
                         checkIfDeathsForDisasterUndefined(data_map[year]["Winter Storm"]) +
                         checkIfDeathsForDisasterUndefined(data_map[year]["Wildfire"])
                 };
+
             new_data.push(item);
         }
 
@@ -158,6 +159,29 @@ $.ajax({
         let group = svg.selectAll("g.layer")
                         .data(stackedData, d => d.key);
 
+        // Create tooltip
+        let tooltip = svg.append("svg").attr("id", "tooltipSVG");
+
+        // Add background for tooltip
+        tooltip.append("rect")
+        .attr("class", "tooltip")
+        .attr("width", tooltipWidth)
+        .attr("height", tooltipHeight);
+
+        // Add text for tooltip
+        tooltip.append("text")
+                .attr("id", "tooltipYear")
+                .text("");
+
+        tooltip.append("text")
+                .attr("id", "tooltipDisaster")
+                .text("");
+
+        tooltip.append("text")
+                .attr("id", "tooltipFatalities")
+                .text("");
+
+        // Finish creating stacked bar groups
         group.exit().remove();
 
         group.enter()
@@ -218,19 +242,16 @@ $.ajax({
                     number_of_fatalities = num_wildfires;
                 }
 
-                // Add tooltip SVG
-                let tooltip = svg.append("svg").attr("id", "tooltipSVG");
+                // Create tooltip
+                // let tooltip = svg.append("svg").attr("id", "tooltipSVG");
+                tooltip.style("display", "block");
 
-                // Add background for tooltip
-                tooltip.append("rect")
-                        .attr("class", "tooltip")
-                        .attr("width", tooltipWidth)
-                        .attr("height", tooltipHeight)
-                        .attr("x", d3.pointer(d)[0] - (tooltipWidth / 4))
+                // Set location of tooltip
+                tooltip.attr("x", d3.pointer(d)[0] - (tooltipWidth / 4))
                         .attr("y", d3.pointer(d)[1] - tooltipHeight);
 
-                // Add text for tooltip
-                tooltip.append("text")
+                //Set text of tooltip
+                tooltip.select("#tooltipYear")
                         .attr("class", "tooltipText")
                         .text(year)
                         .attr("x", d3.pointer(d)[0] + (tooltipWidth / 4))
@@ -238,7 +259,7 @@ $.ajax({
                         .style("font-size", "18px")
                         .style("text-decoration", "underline");
 
-                tooltip.append("text")
+                tooltip.select("#tooltipDisaster")
                         .attr("class", "tooltipText")
                         .text(prettifyDisasterType(disaster_type))
                         .attr("x", d3.pointer(d)[0] + (tooltipWidth / 4))
@@ -246,16 +267,49 @@ $.ajax({
                         .style("fill", color(disaster_type))
                         .style("font-size", "14px");
 
-                tooltip.append("text")
+                tooltip.select("#tooltipFatalities")
                         .attr("class", "tooltipSubtext")
                         .text("Fatalities: " + number_of_fatalities)
                         .attr("x", d3.pointer(d)[0] + (tooltipWidth / 4))
                         .attr("y", d3.pointer(d)[1] - (tooltipHeight / 7))
                         .style("font-size", "14px");
 
+                // // Add background for tooltip
+                // tooltip.append("rect")
+                //         .attr("class", "tooltip")
+                //         .attr("width", tooltipWidth)
+                //         .attr("height", tooltipHeight)
+                //         .attr("x", d3.pointer(d)[0] - (tooltipWidth / 4))
+                //         .attr("y", d3.pointer(d)[1] - tooltipHeight);
+
+                // // Add text for tooltip
+                // tooltip.append("text")
+                //         .attr("class", "tooltipText")
+                //         .text(year)
+                //         .attr("x", d3.pointer(d)[0] + (tooltipWidth / 4))
+                //         .attr("y", d3.pointer(d)[1] - (tooltipHeight / 1.4))
+                //         .style("font-size", "18px")
+                //         .style("text-decoration", "underline");
+
+                // tooltip.append("text")
+                //         .attr("class", "tooltipText")
+                //         .text(prettifyDisasterType(disaster_type))
+                //         .attr("x", d3.pointer(d)[0] + (tooltipWidth / 4))
+                //         .attr("y", d3.pointer(d)[1] - (tooltipHeight / 2.5))
+                //         .style("fill", color(disaster_type))
+                //         .style("font-size", "14px");
+
+                // tooltip.append("text")
+                //         .attr("class", "tooltipSubtext")
+                //         .text("Fatalities: " + number_of_fatalities)
+                //         .attr("x", d3.pointer(d)[0] + (tooltipWidth / 4))
+                //         .attr("y", d3.pointer(d)[1] - (tooltipHeight / 7))
+                //         .style("font-size", "14px");
+
             })
             .on("mouseout", d => {
-                svg.select("#tooltipSVG").remove();
+                // svg.select("#tooltipSVG").remove(); // Pretty sure this line of code is what makes tooltip not show up or flicker
+                svg.select("#tooltipSVG").style("display", "none");
             })
             .transition()
             .duration(0)
@@ -286,7 +340,7 @@ $.ajax({
                 });
 
         legend.append("text")
-                .text(d => d)
+                .text(d => prettifyDisasterType(d))
                 .attr("x", 15)
                 .attr("y", 10);
 

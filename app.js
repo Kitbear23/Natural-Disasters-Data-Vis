@@ -67,12 +67,6 @@ app.get('/index.css', (req, res) => {
         res.end(data);
     });
 })
-app.get('/d3-tip.js', (req, res) => {
-    fs.readFile("./Visualizations/d3-tip.js", (err, data) => {
-        res.writeHead(200, {'Content-Type': 'text/javascript'});
-        res.end(data);
-    });
-})
 
 
 app.listen(port, () => {
